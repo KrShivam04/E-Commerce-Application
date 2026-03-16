@@ -1,6 +1,7 @@
 package com.ecommerce.project.Payload;
 
 import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,13 +9,13 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoryResponse {
+public class ProductResponse {
 
-    private List<CategoryDTO> content;
+    private List<ProductDTO> content;
     private Integer pageNumber;
     private Integer pageSize;
     private Long totalElements;
     private Integer totalPages;
-    private Boolean lastPage;
+    private boolean lastPage;
 
 }
