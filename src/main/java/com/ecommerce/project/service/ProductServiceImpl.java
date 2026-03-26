@@ -71,9 +71,6 @@ public class ProductServiceImpl implements ProductService {
 
         // product size is 0 or not 
         List<Product> products = pageProducts.getContent();
-        if (products.isEmpty()) {
-            throw new APIException("Product does not exists.");
-        }
         List<ProductDTO> productDTOs = products.stream().map(product-> modelMapper.map(product, ProductDTO.class)).toList();
         ProductResponse productResponse = new ProductResponse();
         productResponse.setContent(productDTOs);

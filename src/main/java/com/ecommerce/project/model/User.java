@@ -17,7 +17,7 @@ import lombok.ToString;
 @Data
 @NoArgsConstructor
 @Table(name = "users", uniqueConstraints = {
-    @UniqueConstraint( columnNames = "userName"),
+    @UniqueConstraint( columnNames = "userName"),                           
     @UniqueConstraint( columnNames = "email")
 })
 public class User {
@@ -37,7 +37,7 @@ public class User {
     private String email;
 
     @NotBlank
-    @Size(max = 50)
+    @Size(max = 120)
     private String password;
 
     @Getter
