@@ -1,5 +1,4 @@
 package com.ecommerce.project.Repository;
-
 import com.ecommerce.project.model.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 

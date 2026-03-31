@@ -1,5 +1,4 @@
 package com.ecommerce.project.Security.request;
-
 import jakarta.validation.constraints.NotBlank;
 
 public class LoginRequest {

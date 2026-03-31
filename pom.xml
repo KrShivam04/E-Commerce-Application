@@ -6,7 +6,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>4.0.3</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/> 
 	</parent>
 	<groupId>com.ecommerce</groupId>
 	<artifactId>e-comm</artifactId>
@@ -122,7 +122,7 @@
 			<plugin>
                 <groupId>org.sonarsource.scanner.maven</groupId>
                 <artifactId>sonar-maven-plugin</artifactId>
-                <version>5.5.0.6356</version> <!-- Use the latest version from Maven Repository -->
+                <version>5.5.0.6356</version> 
             </plugin>
 		</plugins>
 	</build>
