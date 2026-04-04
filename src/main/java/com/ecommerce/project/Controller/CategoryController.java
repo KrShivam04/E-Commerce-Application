@@ -18,8 +18,15 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
-    
-    // @GetMapping("api/public/categories")
+    /**
+     * Returns paginated category list with sorting.
+     *
+     * @param pageNumber page index starting from 0
+     * @param pageSize number of records per page
+     * @param sortBy field used for sorting
+     * @param sortOrder sort direction (asc/desc)
+     * @return paginated category response
+     */
     @RequestMapping(value = "public/categories", method = RequestMethod.GET)
     public ResponseEntity<CategoryResponse> getAllCategories(
         @RequestParam(name="pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber, 
@@ -31,6 +38,12 @@ public class CategoryController {
         return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
 
+    /**
+     * Creates a new category.
+     *
+     * @param categoryDTO category payload
+     * @return created category
+     */
     @PostMapping("public/categories")
     public ResponseEntity<CategoryDTO> createCategory(@Valid @RequestBody CategoryDTO categoryDTO) {
         CategoryDTO categoryDTO2 = categoryService.createCategory(categoryDTO);
@@ -38,6 +51,12 @@ public class CategoryController {
         
     }
 
+    /**
+     * Deletes a category by id.
+     *
+     * @param categoryId category id
+     * @return deleted category details
+     */
     @DeleteMapping("admin/category/{categoryId}")
     public ResponseEntity<CategoryDTO> deleteCategory(@PathVariable Long categoryId){
         CategoryDTO delCategoryDTO = categoryService.deleteCategory(categoryId);
@@ -45,6 +64,13 @@ public class CategoryController {
   
     }
 
+    /**
+     * Updates category details for the given id.
+     *
+     * @param categoryDTO updated category payload
+     * @param categoryId category id to update
+     * @return updated category
+     */
     @PutMapping("public/categories/{categoryId}")
     public ResponseEntity<CategoryDTO> updateCategory(@RequestBody CategoryDTO categoryDTO, @PathVariable Long categoryId) {
         CategoryDTO updateCategoryDTO = categoryService.updateCategory(categoryDTO, categoryId);

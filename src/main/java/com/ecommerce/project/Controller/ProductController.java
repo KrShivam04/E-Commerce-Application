@@ -26,12 +26,28 @@ public class ProductController {
     @Autowired
     ProductService productService;
 
+    /**
+     * Creates a product under the given category.
+     *
+     * @param productDTO product payload
+     * @param categoryId category id for the product
+     * @return created product
+     */
     @PostMapping("admin/categories/{categoryId}/product")
     public ResponseEntity<ProductDTO> addProduct(@Valid @RequestBody ProductDTO productDTO, @PathVariable Long categoryId) {
         ProductDTO savedproductDTO = productService.addProduct(categoryId, productDTO);
         return new ResponseEntity<>(savedproductDTO, HttpStatus.CREATED);
     }
 
+    /**
+     * Returns paginated and sorted product list.
+     *
+     * @param pageNumber page index
+     * @param pageSize page size
+     * @param sortBy sort field
+     * @param sortOrder sort direction
+     * @return paginated product response
+     */
     @GetMapping("public/products")
     public ResponseEntity<ProductResponse> getAllProducts(
         @RequestParam(name="pageNumber", defaultValue = AppConstants.PAGE_NUMBER) Integer pageNumber, 
@@ -43,6 +59,16 @@ public class ProductController {
         return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }
 
+    /**
+     * Returns products by category with pagination and sorting.
+     *
+     * @param categoryId category id filter
+     * @param pageNumber page index
+     * @param pageSize page size
+     * @param sortBy sort field
+     * @param sortOrder sort direction
+     * @return paginated product response
+     */
     @GetMapping("public/categories/{categoryId}/products")
     public ResponseEntity<ProductResponse> getProductsByCategory(
         @PathVariable Long categoryId,
@@ -55,6 +81,16 @@ public class ProductController {
         return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }
 
+    /**
+     * Searches products by keyword with pagination and sorting.
+     *
+     * @param keyword search keyword
+     * @param pageNumber page index
+     * @param pageSize page size
+     * @param sortBy sort field
+     * @param sortOrder sort direction
+     * @return product search response
+     */
     @GetMapping("public/products/keyword/{keyword}")
     public ResponseEntity<ProductResponse> getProductsByKeywords(
         @PathVariable String keyword,
@@ -67,18 +103,39 @@ public class ProductController {
         return new ResponseEntity<>(productResponse, HttpStatus.FOUND);
     }
 
+    /**
+     * Updates product details for a given product id.
+     *
+     * @param productDTO updated payload
+     * @param productId product id
+     * @return updated product
+     */
     @PutMapping("admin/products/{productId}")
     public ResponseEntity<ProductDTO> updateProduct(@Valid @RequestBody ProductDTO productDTO, @PathVariable Long productId) {
         ProductDTO updatedProductDTO = productService.updateProduct(productId, productDTO);
         return new ResponseEntity<>(updatedProductDTO, HttpStatus.OK);
     }
 
+    /**
+     * Deletes a product by id.
+     *
+     * @param productId product id
+     * @return deleted product details
+     */
     @DeleteMapping("admin/products/{productId}")
     public ResponseEntity<ProductDTO> deleteProduct(@PathVariable Long productId) {
         ProductDTO deletedProduct =  productService.deleteProduct(productId);
         return new ResponseEntity<>(deletedProduct, HttpStatus.OK);
     }
 
+    /**
+     * Updates image for a given product.
+     *
+     * @param productId product id
+     * @param image new image file
+     * @return updated product details
+     * @throws IOException when image upload fails
+     */
     @PutMapping("products/{productId}/image")
     public ResponseEntity<ProductDTO> updateProductImage(@PathVariable Long productId, @RequestParam("Image")MultipartFile image) throws IOException{
         ProductDTO updatedProduct = productService.updateProductImage(productId, image);

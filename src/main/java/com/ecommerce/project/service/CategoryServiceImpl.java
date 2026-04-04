@@ -23,6 +23,9 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private ModelMapper modelMapper;
 
+    /**
+     * Fetches categories with pagination and sorting metadata.
+     */
     @Override
     public CategoryResponse getAllCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
         // sorting 
@@ -49,6 +52,9 @@ public class CategoryServiceImpl implements CategoryService {
         
     }
 
+    /**
+     * Creates a category after validating duplicate name constraints.
+     */
     @Override
     public CategoryDTO createCategory(CategoryDTO categoryDTO) {
         Category category = modelMapper.map(categoryDTO, Category.class);
@@ -61,6 +67,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     }
 
+    /**
+     * Deletes a category by id.
+     */
     @Override
     public CategoryDTO deleteCategory(Long categoryId) {
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("category", "categoryId", categoryId));
@@ -68,6 +77,9 @@ public class CategoryServiceImpl implements CategoryService {
         return modelMapper.map(category, CategoryDTO.class);
     }
 
+    /**
+     * Updates category details for the given id.
+     */
     @Override
     public CategoryDTO updateCategory(CategoryDTO categoryDTO, Long categoryId) {
         Category category = modelMapper.map(categoryDTO, Category.class);

@@ -6,6 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RoleRepository extends JpaRepository<Role, String> {
 
+    /**
+     * Finds role by enum role name.
+     */
     Optional<Role> findByRoleName(AppRole appRole);
 
 }

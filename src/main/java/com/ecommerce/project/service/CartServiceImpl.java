@@ -36,6 +36,9 @@ public class CartServiceImpl implements CartService {
     @Autowired
     private ModelMapper modelMapper;
 
+    /**
+     * Adds a product with quantity into the authenticated user's cart.
+     */
     @Override
     public CartDTO addProductToCart(Long productId, Integer quantity) {
         // finding existing cart or create one
@@ -94,6 +97,9 @@ public class CartServiceImpl implements CartService {
 
     }
 
+    /**
+     * Returns existing cart for current user, or creates a new one.
+     */
     private Cart createCart() {
 
         Cart userCart = cartRepository.findCartByEmail(authUtil.loggedInEmail());
@@ -110,6 +116,9 @@ public class CartServiceImpl implements CartService {
 
     }
 
+    /**
+     * Fetches all carts with associated products.
+     */
     @Override
     public List<CartDTO> getAllCarts() {
         List<Cart> carts = cartRepository.findAll();
@@ -126,6 +135,9 @@ public class CartServiceImpl implements CartService {
         return cartDTOs;
     }
 
+    /**
+     * Fetches a specific cart by email and cart id.
+     */
     @Override
     public CartDTO getCart(String emailId, Long cartId) {
         Cart cart = cartRepository.findCartByEmailAndCartId(emailId, cartId);
@@ -141,6 +153,9 @@ public class CartServiceImpl implements CartService {
         return cartDTO;
     }
 
+    /**
+     * Increments or decrements quantity for a product in current user's cart.
+     */
     @Transactional
     @Override
     public CartDTO updateProductQuantity(Long productId, Integer quantity) {
@@ -203,6 +218,9 @@ public class CartServiceImpl implements CartService {
         return cartDTO;
     }
 
+    /**
+     * Removes a product from a cart and adjusts total price.
+     */
     @Transactional
     @Override
     public String deleteProductFromCart(Long cartId, Long productId) {
@@ -222,6 +240,9 @@ public class CartServiceImpl implements CartService {
 
     }
 
+    /**
+     * Refreshes cart item price when product price changes.
+     */
     @Override
     public void updateProductInCarts(Long cartId, Long productId) {
         Cart cart = cartRepository.findById(cartId).orElseThrow(()-> new ResourceNotFoundException("Cart", "cartId", cartId));

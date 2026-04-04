@@ -6,6 +6,9 @@ public class MessageResponse {
 
     private String message;
 
+    /**
+     * Creates message response payload.
+     */
     public MessageResponse(String message) {
         this.message = message;
     }

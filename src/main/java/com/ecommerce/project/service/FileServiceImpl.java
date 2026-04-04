@@ -9,7 +9,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class FileServiceImpl implements FileService {
-    // method to upload the image
+    /**
+     * Stores an uploaded image in the provided directory and returns generated filename.
+     *
+     * @param path destination directory path
+     * @param file uploaded multipart file
+     * @return generated file name
+     * @throws IOException when file cannot be stored
+     */
     @Override
     public String uploadImage(String path, MultipartFile file) throws IOException {
         // File name of current/ original file 

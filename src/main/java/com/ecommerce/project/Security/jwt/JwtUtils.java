@@ -28,6 +28,9 @@ public class JwtUtils {
     @Value("${spring.ecom.app.jwtCookieName}")
     private String jwtCookie;
 
+    /**
+     * Reads JWT value from configured cookie.
+     */
     public String getJwtFromCookies(HttpServletRequest request) {
         Cookie cookie = WebUtils.getCookie(request, jwtCookie);
         if (cookie != null ) {
@@ -37,17 +40,31 @@ public class JwtUtils {
         }
     }
 
+    /**
+     * Generates JWT and returns response cookie carrying the token.
+     */
     public ResponseCookie generateJwtCookie(UserDetailsImpl userPrinciple) {
         String jwt = generateTokenFromUsername(userPrinciple.getUsername());
-        ResponseCookie cookie = ResponseCookie.from(jwtCookie, jwt).path("/api").maxAge(24*60*60).httpOnly(false).build();
+        ResponseCookie cookie = ResponseCookie.from(jwtCookie, jwt)
+                .path("/")
+                .maxAge(24*60*60)
+                .httpOnly(true)
+                .sameSite("Lax")
+                .build();
         return cookie;
     } 
 
+    /**
+     * Returns a cookie that clears JWT in client.
+     */
     public ResponseCookie getCleanJwtCookie() {
-        ResponseCookie cookie = ResponseCookie.from(jwtCookie, null).path("/api").build();
+        ResponseCookie cookie = ResponseCookie.from(jwtCookie, null).path("/").build();
         return cookie;
     } 
 
+    /**
+     * Generates signed jwt token for the supplied username.
+     */
     public String generateTokenFromUsername(String userDetails) {
         return Jwts.builder()
                 .subject(userDetails)
@@ -57,6 +74,9 @@ public class JwtUtils {
                 .compact();
     }
 
+    /**
+     * Extracts username from signed jwt token.
+     */
     public String getUserNameFromJwtToken(String token) {
         return Jwts.parser()
                         .verifyWith((SecretKey) key())
@@ -64,10 +84,16 @@ public class JwtUtils {
                 .getPayload().getSubject();
     }
 
+    /**
+     * Creates signing key from configured jwt secret.
+     */
     private Key key() {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
 
+    /**
+     * Validates jwt token signature and expiry.
+     */
     public boolean validateJwtToken(String authToken) {
         try {
             System.out.println("Validate");

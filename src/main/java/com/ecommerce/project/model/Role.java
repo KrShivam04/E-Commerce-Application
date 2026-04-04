@@ -27,6 +27,9 @@ public class Role {
     @Column(length = 20, name = "role_name")
     private AppRole roleName;
 
+    /**
+     * Creates role entity for the supplied enum role name.
+     */
     public Role(AppRole roleName) {
         this.roleName = roleName;
     }

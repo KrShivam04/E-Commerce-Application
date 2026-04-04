@@ -53,6 +53,12 @@ public class AuthController {
     @Autowired
     private RoleRepository roleRepository;
 
+    /**
+     * Authenticates user credentials and returns user info with JWT cookie.
+     *
+     * @param loginRequest login payload containing username and password
+     * @return user info response or bad-credentials response
+     */
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
         Authentication authentication;
@@ -81,6 +87,12 @@ public class AuthController {
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(response);
     }
 
+    /**
+     * Registers a new user with requested roles (or ROLE_USER by default).
+     *
+     * @param signUpRequest signup payload
+     * @return registration result message
+     */
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
         
@@ -128,6 +140,12 @@ public class AuthController {
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 
+    /**
+     * Returns username from the current authentication context.
+     *
+     * @param authentication current authentication object
+     * @return username or "Null" when not authenticated
+     */
     @GetMapping("/username")
     public String currentUserName(Authentication authentication) {
         if (authentication != null) {
@@ -137,6 +155,12 @@ public class AuthController {
         }
     }
 
+    /**
+     * Returns user profile details for the currently authenticated user.
+     *
+     * @param authentication current authentication object
+     * @return user info response
+     */
     @GetMapping("/user")
     public ResponseEntity<UserInfoResponse> getUserDetail(Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
@@ -151,6 +175,11 @@ public class AuthController {
         return ResponseEntity.ok().body(response);
     }
 
+    /**
+     * Clears authentication cookie and signs out the current user.
+     *
+     * @return sign-out confirmation message
+     */
     @PostMapping("/signout")
     public ResponseEntity<?> signOutUser() {
         ResponseCookie cookie = jwtUtils.getCleanJwtCookie();

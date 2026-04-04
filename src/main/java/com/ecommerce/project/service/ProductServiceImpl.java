@@ -47,6 +47,9 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private CartService cartService;
 
+    /**
+     * Adds a product to a category after checking duplicate product names.
+     */
     @Override
     public ProductDTO addProduct(Long categoryId, ProductDTO productDTO) {
         // check if the category is present or not 
@@ -75,6 +78,9 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
+    /**
+     * Fetches all products with pagination and sorting.
+     */
     @Override
     public ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
         // sorting 
@@ -96,6 +102,9 @@ public class ProductServiceImpl implements ProductService {
         return productResponse;        
     }
 
+    /**
+     * Fetches products for a specific category.
+     */
     @Override
     public ProductResponse searchByCategory(Long categoryId, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
         // product size is 0 or not 
@@ -127,6 +136,9 @@ public class ProductServiceImpl implements ProductService {
         return productResponse;    
     }
 
+    /**
+     * Fetches products matching a keyword.
+     */
     @Override
     public ProductResponse searchProductByKeyword(String keyword, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
         // sorting 
@@ -152,6 +164,9 @@ public class ProductServiceImpl implements ProductService {
         return productResponse; 
     }
 
+    /**
+     * Updates product details and refreshes linked cart entries.
+     */
     @Override
     public ProductDTO updateProduct(Long productId, ProductDTO productDTO) {
         // getting the existing product from the db
@@ -183,6 +198,9 @@ public class ProductServiceImpl implements ProductService {
         return modelMapper.map(savedProduct, ProductDTO.class);
     }
 
+    /**
+     * Deletes a product and removes it from all carts where present.
+     */
     @Override
     public ProductDTO deleteProduct(Long productId) {
         Product product = productRepository.findById(productId).orElseThrow(()-> new ResourceNotFoundException("Product", "ProductId", productId));
@@ -194,6 +212,9 @@ public class ProductServiceImpl implements ProductService {
         return modelMapper.map(product, ProductDTO.class);
     }
 
+    /**
+     * Uploads and updates product image.
+     */
     @Override
     public ProductDTO updateProductImage(Long productId, MultipartFile image) throws IOException {
         // Get the product from the database

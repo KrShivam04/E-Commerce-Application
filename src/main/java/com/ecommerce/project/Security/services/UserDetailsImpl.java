@@ -25,6 +25,9 @@ public class UserDetailsImpl implements UserDetails {
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
 
+    /**
+     * Creates a security principal with identity and authority information.
+     */
     public UserDetailsImpl(long id, String username, String email, String password, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
@@ -33,6 +36,9 @@ public class UserDetailsImpl implements UserDetails {
         this.authorities = authorities;
     }
 
+    /**
+     * Builds security principal from application user entity.
+     */
     public static UserDetailsImpl build(User user) {
         List<GrantedAuthority> authorities = user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getRoleName().name())).collect(Collectors.toList());
         return new UserDetailsImpl(
@@ -40,41 +46,65 @@ public class UserDetailsImpl implements UserDetails {
         );
     }
 
+    /**
+     * Returns authorities assigned to current authenticated user.
+     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
     }
 
+    /**
+     * Returns encoded password.
+     */
     @Override
     public @Nullable String getPassword() {
         return password;
     }
 
+    /**
+     * Returns login username.
+     */
     @Override
     public String getUsername() {
         return username;
     }
 
+    /**
+     * Indicates whether account is not expired.
+     */
     @Override
     public boolean isAccountNonExpired() {
         return UserDetails.super.isAccountNonExpired();
     }
 
+    /**
+     * Indicates whether account is not locked.
+     */
     @Override
     public boolean isAccountNonLocked() {
         return UserDetails.super.isAccountNonLocked();
     }
 
+    /**
+     * Indicates whether credentials are not expired.
+     */
     @Override
     public boolean isCredentialsNonExpired() {
         return UserDetails.super.isCredentialsNonExpired();
     }
 
+    /**
+     * Indicates whether user is enabled.
+     */
     @Override
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
     }
 
+    /**
+     * Compares principals based on user id.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

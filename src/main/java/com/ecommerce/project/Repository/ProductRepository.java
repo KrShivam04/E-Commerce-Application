@@ -9,7 +9,14 @@ import com.ecommerce.project.model.Product;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long>{
 
+    /**
+     * Returns products in category sorted by price ascending.
+     */
     Page<Product> findByCategoryOrderByPriceAsc(Category category, Pageable pageDetails);
+
+    /**
+     * Returns products matching keyword pattern (case insensitive).
+     */
     Page<Product> findByProductNameLikeIgnoreCase(String keyword, Pageable pageDetails);
 
 }
