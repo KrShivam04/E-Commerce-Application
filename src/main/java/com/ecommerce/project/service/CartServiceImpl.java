@@ -113,7 +113,7 @@ public class CartServiceImpl implements CartService {
         cart.setUser(authUtil.loggedInUser());
         Cart newCart = cartRepository.save(cart);
         return newCart;
-
+        
     }
 
     /**
@@ -127,7 +127,14 @@ public class CartServiceImpl implements CartService {
         }
         List<CartDTO> cartDTOs = carts.stream().map(cart-> {
             CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
-            List<ProductDTO> product = cart.getCartItem().stream().map(p-> modelMapper.map(p.getProduct(), ProductDTO.class)).collect(Collectors.toList());
+
+           List<ProductDTO> product = cart.getCartItem().stream().map(cartItem -> {
+                ProductDTO productDTO = modelMapper.map(cartItem.getProduct(), ProductDTO.class);
+                productDTO.setQuantity(cartItem.getQuantity()); // Set the quantity from CartItem
+                return productDTO;
+            }).collect(Collectors.toList());
+
+            
             cartDTO.setProducts(product);
             return cartDTO;
         }).collect(Collectors.toList());
