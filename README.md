@@ -154,7 +154,7 @@ Base URL: `http://localhost:5000`
 | GET | `/v3/api-docs` | OpenAPI specification |
 
 ## Folder Structure
-
+```
 e-comm/
 ├── images/
 ├── src/
@@ -183,6 +183,7 @@ e-comm/
 ├── mvnw
 ├── mvnw.cmd
 └── pom.xml
+```
 
 
 ## Access the Application
