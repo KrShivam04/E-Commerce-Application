@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.ecommerce.project.Exception.APIException;
@@ -43,16 +44,19 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private CartRepository cartRepository;
-    
+
     @Autowired
     private CartService cartService;
+
+    @Value("${image.base.url}")
+    String imageBaseUrl;
 
     /**
      * Adds a product to a category after checking duplicate product names.
      */
     @Override
     public ProductDTO addProduct(Long categoryId, ProductDTO productDTO) {
-        // check if the category is present or not 
+        // check if the category is present or not
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("category", "categoryId", categoryId));
 
         Boolean isProductNotPresent = true;
@@ -82,16 +86,29 @@ public class ProductServiceImpl implements ProductService {
      * Fetches all products with pagination and sorting.
      */
     @Override
-    public ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
-        // sorting 
+    public ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder, String keyword, String category) {
+        // sorting
         Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending(): Sort.by(sortBy).descending();
         // pagination
         Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
-        Page<Product> pageProducts = productRepository.findAll(pageDetails);
+        Specification<Product> spec = (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
+        if (keyword != null && !keyword.isEmpty()) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.lower(root.get("productName")), "%" + keyword.toLowerCase() + "%"));
+        }
 
-        // product size is 0 or not 
+        if (category != null && !category.isEmpty()) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("category").get("categoryName"), category));
+        }
+
+        Page<Product> pageProducts = productRepository.findAll(spec, pageDetails);
+
+        // product size is 0 or not
         List<Product> products = pageProducts.getContent();
-        List<ProductDTO> productDTOs = products.stream().map(product-> modelMapper.map(product, ProductDTO.class)).toList();
+        List<ProductDTO> productDTOs = products.stream().map(product -> {
+            ProductDTO productDTO = modelMapper.map(product, ProductDTO.class);
+            productDTO.setImage(constructImageURL(product.getImage()));
+            return productDTO;
+        }).toList();
         ProductResponse productResponse = new ProductResponse();
         productResponse.setContent(productDTOs);
         productResponse.setPageNumber(pageProducts.getNumber());
@@ -99,7 +116,16 @@ public class ProductServiceImpl implements ProductService {
         productResponse.setTotalElements(pageProducts.getTotalElements());
         productResponse.setTotalPages(pageProducts.getTotalPages());
         productResponse.setLastPage(pageProducts.isLast());
-        return productResponse;        
+        return productResponse;
+    }
+
+    /**
+     * Method to construct image url
+     */
+
+    private String constructImageURL(String imageName) {
+
+        return imageBaseUrl.endsWith("/") ? imageBaseUrl + imageName : imageBaseUrl + "/" + imageName;
     }
 
     /**
@@ -107,20 +133,20 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public ProductResponse searchByCategory(Long categoryId, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
-        // product size is 0 or not 
-        
+        // product size is 0 or not
+
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("category", "categoryId", categoryId));
 
-        // sorting 
+        // sorting
         Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending(): Sort.by(sortBy).descending();
         // pagination
         Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
         Page<Product> pageProducts = productRepository.findByCategoryOrderByPriceAsc(category,pageDetails);
 
-        // product size is 0 or not 
+        // product size is 0 or not
         List<Product> products = pageProducts.getContent();
 
-        
+
         if (products.isEmpty()) {
             throw new APIException("Products does not exists with category :: " + categoryId);
         }
@@ -133,7 +159,7 @@ public class ProductServiceImpl implements ProductService {
         productResponse.setTotalElements(pageProducts.getTotalElements());
         productResponse.setTotalPages(pageProducts.getTotalPages());
         productResponse.setLastPage(pageProducts.isLast());
-        return productResponse;    
+        return productResponse;
     }
 
     /**
@@ -141,14 +167,14 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public ProductResponse searchProductByKeyword(String keyword, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
-        // sorting 
+        // sorting
         Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending(): Sort.by(sortBy).descending();
         // pagination
         Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
         Page<Product> pageProducts = productRepository.findByProductNameLikeIgnoreCase( keyword ,pageDetails);
-        
+
         List<Product> products = pageProducts.getContent();
-        
+
         if (products.isEmpty()) {
             throw new APIException("Products does not exists with keyword :: " + keyword );
         }
@@ -161,7 +187,7 @@ public class ProductServiceImpl implements ProductService {
         productResponse.setTotalElements(pageProducts.getTotalElements());
         productResponse.setTotalPages(pageProducts.getTotalPages());
         productResponse.setLastPage(pageProducts.isLast());
-        return productResponse; 
+        return productResponse;
     }
 
     /**
@@ -220,19 +246,19 @@ public class ProductServiceImpl implements ProductService {
         // Get the product from the database
         Product productFromDb = productRepository.findById(productId).orElseThrow(()-> new ResourceNotFoundException("Product", "ProductId", productId));
 
-        // upload the image to server in the folder      
+        // upload the image to server in the folder
         // get the file name of uploaded image
-        
+
         String fileName = fileService.uploadImage(path, image);
-        
+
         // updating the new file name to the product
         productFromDb.setImage(fileName);
         // saving the updated product
         Product updatedProduct = productRepository.save(productFromDb);
-        // return the ProductDTO class object 
+        // return the ProductDTO class object
         return modelMapper.map(updatedProduct, ProductDTO.class);
     }
 
-    
+
 
 }

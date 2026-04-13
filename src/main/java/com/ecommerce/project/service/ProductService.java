@@ -13,7 +13,7 @@ public interface ProductService {
     /**
      * Returns paginated products.
      */
-    ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
+    ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder, String keyword, String category);
 
     /**
      * Returns paginated products for a category.
