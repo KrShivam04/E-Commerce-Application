@@ -206,15 +206,6 @@ e-comm/
 | `IMAGE_UPLOAD_PATH` | Local folder for uploaded images |
 | `IMAGE_BASE_URL` | Base URL used to serve images |
 
-## Usage
-
-- Use **Postman**, **Swagger UI**, or any frontend client to test the APIs.
-- Start by registering a user through `/api/auth/signup`.
-- Login using `/api/auth/signin` to receive the authentication cookie/token details.
-- Use authenticated endpoints for cart, address, and order workflows.
-- Use admin-focused endpoints to manage products and categories.
-- Swagger UI is available for quick API testing and endpoint discovery.
-
 
 ## Author
 
