@@ -32,7 +32,7 @@ It is suitable for backend-focused portfolios, Java full stack projects, and pro
 | Documentation | Springdoc OpenAPI, Swagger UI |
 | Build Tool | Maven |
 | Utilities | Lombok |
-| Packaging | WAR |
+| Packaging | JAR |
 
 ## Features
 
@@ -86,7 +86,7 @@ It is suitable for backend-focused portfolios, Java full stack projects, and pro
 
 ## API Endpoints
 
-Base URL: `http://localhost:5000`
+Base URL: `http://localhost:5000/api`
 
 ### Authentication
 
@@ -154,6 +154,7 @@ Base URL: `http://localhost:5000`
 | GET | `/v3/api-docs` | OpenAPI specification |
 
 ## Folder Structure
+
 ```
 e-comm/
 ├── images/
@@ -188,7 +189,7 @@ e-comm/
 
 ## Access the Application
 
-- API Base URL: `http://localhost:5000`
+- API Base URL: `http://localhost:5000/api`
 - Swagger UI: `http://localhost:5000/swagger-ui/index.html`
 
 ## Environment Variables
