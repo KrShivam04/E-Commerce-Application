@@ -15,7 +15,6 @@ This backend is designed for modern e-commerce applications that need:
 - Admin-level APIs for maintaining catalog data
 - API documentation support using **Swagger / OpenAPI**
 
-It is suitable for backend-focused portfolios, Java full stack projects, and production-style learning implementations.
 
 ## Tech Stack
 
