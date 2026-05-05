@@ -32,7 +32,7 @@ It is suitable for backend-focused portfolios, Java full stack projects, and pro
 | Documentation | Springdoc OpenAPI, Swagger UI |
 | Build Tool | Maven |
 | Utilities | Lombok |
-| Packaging | WAR |
+| Packaging | JAR |
 
 ## Features
 
@@ -86,7 +86,7 @@ It is suitable for backend-focused portfolios, Java full stack projects, and pro
 
 ## API Endpoints
 
-Base URL: `http://localhost:5000`
+Base URL: `http://localhost:5000/api`
 
 ### Authentication
 
@@ -155,6 +155,7 @@ Base URL: `http://localhost:5000`
 
 ## Folder Structure
 
+```
 e-comm/
 ├── images/
 ├── src/
@@ -183,11 +184,12 @@ e-comm/
 ├── mvnw
 ├── mvnw.cmd
 └── pom.xml
+```
 
 
 ## Access the Application
 
-- API Base URL: `http://localhost:5000`
+- API Base URL: `http://localhost:5000/api`
 - Swagger UI: `http://localhost:5000/swagger-ui/index.html`
 
 ## Environment Variables
@@ -204,15 +206,6 @@ e-comm/
 | `FRONTEND_URL` | Allowed frontend origin |
 | `IMAGE_UPLOAD_PATH` | Local folder for uploaded images |
 | `IMAGE_BASE_URL` | Base URL used to serve images |
-
-## Usage
-
-- Use **Postman**, **Swagger UI**, or any frontend client to test the APIs.
-- Start by registering a user through `/api/auth/signup`.
-- Login using `/api/auth/signin` to receive the authentication cookie/token details.
-- Use authenticated endpoints for cart, address, and order workflows.
-- Use admin-focused endpoints to manage products and categories.
-- Swagger UI is available for quick API testing and endpoint discovery.
 
 
 ## Author
