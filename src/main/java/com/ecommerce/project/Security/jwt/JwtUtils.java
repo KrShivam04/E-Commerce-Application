@@ -48,7 +48,8 @@ public class JwtUtils {
         ResponseCookie cookie = ResponseCookie.from(jwtCookie, jwt)
                 .path("/")
                 .maxAge(24*60*60)
-                .httpOnly(true)
+                .httpOnly(false)
+                .secure(false)
                 .sameSite("Lax")
                 .build();
         return cookie;
@@ -96,7 +97,7 @@ public class JwtUtils {
      */
     public boolean validateJwtToken(String authToken) {
         try {
-            System.out.println("Validate");
+            logger.debug("Validating JWT token");
             Jwts.parser().verifyWith((SecretKey) key()).build().parseSignedClaims(authToken);
             return true;
         } catch (MalformedJwtException e) {

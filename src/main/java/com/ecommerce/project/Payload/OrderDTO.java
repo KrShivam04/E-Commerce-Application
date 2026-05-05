@@ -1,4 +1,5 @@
 package com.ecommerce.project.Payload;
+import java.util.ArrayList;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -14,7 +15,7 @@ public class OrderDTO {
 
     private String email;
 
-    private List<OrderItemDTO> orderItems;
+    private List<OrderItemDTO> orderItems = new ArrayList<>();
 
     private LocalDate orderDate;
 

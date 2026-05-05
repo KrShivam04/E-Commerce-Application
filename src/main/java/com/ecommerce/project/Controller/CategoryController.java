@@ -1,4 +1,6 @@
 package com.ecommerce.project.Controller;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,10 +12,11 @@ import com.ecommerce.project.service.CategoryService;
 import jakarta.validation.Valid;
 
 
-
 @RestController
 @RequestMapping("/api/")
 public class CategoryController {
+
+    private static final Logger logger = LoggerFactory.getLogger(CategoryController.class);
 
     @Autowired
     private CategoryService categoryService;
@@ -34,7 +37,9 @@ public class CategoryController {
         @RequestParam(name="sortBy", defaultValue = AppConstants.SORT_CATEGORIES_BY, required = false) String sortBy,
         @RequestParam(name="sortOrder", defaultValue = AppConstants.SORT_DIR, required = false) String sortOrder
     ) {
+        logger.debug("Fetching categories pageNumber={}, pageSize={}, sortBy={}, sortOrder={}", pageNumber, pageSize, sortBy, sortOrder);
         CategoryResponse categoryResponse = categoryService.getAllCategories(pageNumber, pageSize, sortBy, sortOrder);
+        logger.debug("Fetched categories pageNumber={}, pageSize={}", pageNumber, pageSize);
         return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
 
@@ -46,7 +51,9 @@ public class CategoryController {
      */
     @PostMapping("public/categories")
     public ResponseEntity<CategoryDTO> createCategory(@Valid @RequestBody CategoryDTO categoryDTO) {
+        logger.info("Creating category");
         CategoryDTO categoryDTO2 = categoryService.createCategory(categoryDTO);
+        logger.info("Category created successfully");
         return new ResponseEntity<>(categoryDTO2, HttpStatus.CREATED);
         
     }
@@ -59,7 +66,9 @@ public class CategoryController {
      */
     @DeleteMapping("admin/category/{categoryId}")
     public ResponseEntity<CategoryDTO> deleteCategory(@PathVariable Long categoryId){
+        logger.info("Deleting category categoryId={}", categoryId);
         CategoryDTO delCategoryDTO = categoryService.deleteCategory(categoryId);
+        logger.info("Category deleted successfully categoryId={}", categoryId);
         return new ResponseEntity<>(delCategoryDTO, HttpStatus.OK);
   
     }
@@ -73,7 +82,9 @@ public class CategoryController {
      */
     @PutMapping("public/categories/{categoryId}")
     public ResponseEntity<CategoryDTO> updateCategory(@RequestBody CategoryDTO categoryDTO, @PathVariable Long categoryId) {
+        logger.info("Updating category categoryId={}", categoryId);
         CategoryDTO updateCategoryDTO = categoryService.updateCategory(categoryDTO, categoryId);
+        logger.info("Category updated successfully categoryId={}", categoryId);
         return new ResponseEntity<>(updateCategoryDTO, HttpStatus.OK);
         
     }

@@ -3,6 +3,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ecommerce.project.Exception.APIException;
@@ -27,6 +29,8 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class OrderServiceImpl implements OrderService {
+
+    private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
 
     @Autowired
     private CartRepository cartRepository;
@@ -57,10 +61,12 @@ public class OrderServiceImpl implements OrderService {
     public OrderDTO placeOrder(
         String emailId, Long addressId, String paymentMethod, String pgName, String pgPaymentId, String pgStatus, String pgResponseMessage
     ) {
+        logger.info("Placing order email={}, addressId={}, paymentMethod={}, pgName={}, pgStatus={}", emailId, addressId, paymentMethod, pgName, pgStatus);
         // getting user cart
 
         Cart cart = cartRepository.findCartByEmail(emailId);
         if (cart == null) {
+            logger.warn("Cannot place order because cart was not found email={}", emailId);
             throw new ResourceNotFoundException("Cart", "email", emailId);
         }
         Address address = addressRepository.findById(addressId).orElseThrow(()-> new ResourceNotFoundException("Address", "addressId", addressId));
@@ -85,8 +91,10 @@ public class OrderServiceImpl implements OrderService {
 
         List<CartItem> cartItems = cart.getCartItem();
         if (cartItems.isEmpty()) {
+            logger.warn("Cannot place order because cart is empty cartId={}, email={}", cart.getCartId(), emailId);
             throw new APIException("Cart is empty.");
         }
+        logger.debug("Creating order items from cart cartId={}, itemCount={}", cart.getCartId(), cartItems.size());
         List<OrderItem> orderItems = new ArrayList<>();
         for (CartItem cartItem: cartItems) {
             OrderItem orderItem = new OrderItem();
@@ -102,9 +110,10 @@ public class OrderServiceImpl implements OrderService {
 
         // update Product Stock
 
-        cart.getCartItem().forEach(item -> {
+        new ArrayList<>(cart.getCartItem()).forEach(item -> {
             int quantity = item.getQuantity();
             Product product = item.getProduct();
+            logger.debug("Updating stock for productId={}, orderedQuantity={}", product.getProductId(), quantity);
             product.setQuantity(product.getQuantity() - quantity);
             productRepository.save(product);
 
@@ -127,6 +136,7 @@ public class OrderServiceImpl implements OrderService {
             orderDTO.setPaymentDTO(modelMapper.map(savedOrder.getPayment(), com.ecommerce.project.Payload.PaymentDTO.class));
         }
 
+        logger.info("Order placed orderId={}, email={}, itemCount={}, totalAmount={}", savedOrder.getOrderId(), emailId, orderItems.size(), savedOrder.getTotalAmount());
         return orderDTO;
     }
 

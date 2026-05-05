@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.ecommerce.project.Payload.CartDTO;
 
+import com.ecommerce.project.Payload.CartItemDTO;
 import jakarta.transaction.Transactional;
 
 public interface CartService {
@@ -39,4 +40,5 @@ public interface CartService {
      */
     void updateProductInCarts(Long cartId, Long productId);
 
+    String createOrUpdateCartWithItems(List<CartItemDTO> cartItems);
 }

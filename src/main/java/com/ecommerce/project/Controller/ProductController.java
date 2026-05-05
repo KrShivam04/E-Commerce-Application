@@ -1,5 +1,7 @@
 package com.ecommerce.project.Controller;
 import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,8 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/")
 public class ProductController {
 
+    private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
+
     @Autowired
     ProductService productService;
 
@@ -35,7 +39,9 @@ public class ProductController {
      */
     @PostMapping("admin/categories/{categoryId}/product")
     public ResponseEntity<ProductDTO> addProduct(@Valid @RequestBody ProductDTO productDTO, @PathVariable Long categoryId) {
+        logger.info("Adding product to category categoryId={}", categoryId);
         ProductDTO savedproductDTO = productService.addProduct(categoryId, productDTO);
+        logger.info("Product added successfully to category categoryId={}", categoryId);
         return new ResponseEntity<>(savedproductDTO, HttpStatus.CREATED);
     }
 
@@ -57,7 +63,9 @@ public class ProductController {
         @RequestParam(name="soryBy", defaultValue = AppConstants.SORT_PRODUCTS_BY) String sortBy, 
         @RequestParam(name="sortOrder", defaultValue = AppConstants.SORT_DIR) String sortOrder
     ) {
+        logger.debug("Fetching products pageNumber={}, pageSize={}, sortBy={}, sortOrder={}, keyword={}, category={}", pageNumber, pageSize, sortBy, sortOrder, keyword, category);
         ProductResponse productResponse = productService.getAllProducts(pageNumber, pageSize, sortBy, sortOrder, keyword, category);
+        logger.debug("Fetched products pageNumber={}, pageSize={}", pageNumber, pageSize);
         return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }
 
@@ -79,7 +87,9 @@ public class ProductController {
         @RequestParam(name="soryBy", defaultValue = AppConstants.SORT_PRODUCTS_BY) String sortBy, 
         @RequestParam(name="sortOrder", defaultValue = AppConstants.SORT_DIR) String sortOrder
     ) {
+        logger.debug("Fetching products by categoryId={}, pageNumber={}, pageSize={}", categoryId, pageNumber, pageSize);
         ProductResponse productResponse = productService.searchByCategory(categoryId, pageNumber, pageSize, sortBy, sortOrder);
+        logger.debug("Fetched products by categoryId={}", categoryId);
         return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }
 
@@ -101,7 +111,9 @@ public class ProductController {
         @RequestParam(name="soryBy", defaultValue = AppConstants.SORT_PRODUCTS_BY) String sortBy, 
         @RequestParam(name="sortOrder", defaultValue = AppConstants.SORT_DIR) String sortOrder
     ) {
+        logger.debug("Searching products by keyword={}, pageNumber={}, pageSize={}", keyword, pageNumber, pageSize);
         ProductResponse productResponse = productService.searchProductByKeyword('%' + keyword + '%',  pageNumber, pageSize, sortBy, sortOrder);
+        logger.debug("Searched products by keyword={}", keyword);
         return new ResponseEntity<>(productResponse, HttpStatus.FOUND);
     }
 
@@ -114,7 +126,9 @@ public class ProductController {
      */
     @PutMapping("admin/products/{productId}")
     public ResponseEntity<ProductDTO> updateProduct(@Valid @RequestBody ProductDTO productDTO, @PathVariable Long productId) {
+        logger.info("Updating product productId={}", productId);
         ProductDTO updatedProductDTO = productService.updateProduct(productId, productDTO);
+        logger.info("Product updated successfully productId={}", productId);
         return new ResponseEntity<>(updatedProductDTO, HttpStatus.OK);
     }
 
@@ -126,7 +140,9 @@ public class ProductController {
      */
     @DeleteMapping("admin/products/{productId}")
     public ResponseEntity<ProductDTO> deleteProduct(@PathVariable Long productId) {
+        logger.info("Deleting product productId={}", productId);
         ProductDTO deletedProduct =  productService.deleteProduct(productId);
+        logger.info("Product deleted successfully productId={}", productId);
         return new ResponseEntity<>(deletedProduct, HttpStatus.OK);
     }
 
@@ -140,7 +156,9 @@ public class ProductController {
      */
     @PutMapping("products/{productId}/image")
     public ResponseEntity<ProductDTO> updateProductImage(@PathVariable Long productId, @RequestParam("Image")MultipartFile image) throws IOException{
+        logger.info("Updating product image productId={}, originalFilename={}", productId, image.getOriginalFilename());
         ProductDTO updatedProduct = productService.updateProductImage(productId, image);
+        logger.info("Product image updated successfully productId={}", productId);
         return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
     }
 

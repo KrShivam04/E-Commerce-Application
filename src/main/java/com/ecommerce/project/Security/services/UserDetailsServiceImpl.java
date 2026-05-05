@@ -12,7 +12,7 @@ import jakarta.transaction.Transactional;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     /**
      * Loads user details by username for spring authentication flow.

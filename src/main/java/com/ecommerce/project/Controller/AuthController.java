@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -38,6 +40,8 @@ import org.springframework.http.HttpHeaders;
 @RequestMapping("/api/auth")
 public class AuthController {
 
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+
     @Autowired
     private JwtUtils jwtUtils;
 
@@ -65,6 +69,7 @@ public class AuthController {
         try {
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         } catch (AuthenticationException exception) {
+            logger.warn("Failed signin attempt for username: {}", loginRequest.getUsername());
             Map<String, Object> map = new HashMap<>();
             map.put("message", "Bad credentials");
             map.put("status", false);
@@ -82,8 +87,9 @@ public class AuthController {
                 .collect(Collectors.toList());
 
         UserInfoResponse response = new UserInfoResponse(userDetails.getId(),
-                userDetails.getUsername(), roles, jwtCookie.toString());
+                userDetails.getUsername(), roles, jwtCookie.getValue());
 
+        logger.info("User signed in successfully: {}", userDetails.getUsername());
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(response);
     }
 
@@ -97,10 +103,12 @@ public class AuthController {
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
         
         if (userRepository.existsByUserName(signUpRequest.getUsername())) {
+            logger.warn("Signup rejected because username is already taken: {}", signUpRequest.getUsername());
             return ResponseEntity.badRequest().body(new MessageResponse("Error : User name is already taken!"));
         }
 
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+            logger.warn("Signup rejected because email is already taken: {}", signUpRequest.getEmail());
             return ResponseEntity.badRequest().body(new MessageResponse("Error : Email is already taken!"));
         }
 
@@ -137,6 +145,7 @@ public class AuthController {
         user.setRoles(roles);
         userRepository.save(user);
 
+        logger.info("User registered successfully: {}", signUpRequest.getUsername());
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 
@@ -183,6 +192,7 @@ public class AuthController {
     @PostMapping("/signout")
     public ResponseEntity<?> signOutUser() {
         ResponseCookie cookie = jwtUtils.getCleanJwtCookie();
+        logger.info("User signed out");
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(new MessageResponse("You have been signed out!!!"));
     }
 
